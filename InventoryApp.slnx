@@ -1,0 +1,6 @@
+<Solution>
+  <Project Path="InventoryApp.Application/InventoryApp.Application.csproj" />
+  <Project Path="InventoryApp.Domain/InventoryApp.Domain.csproj" />
+  <Project Path="InventoryApp.Infrastructure/InventoryApp.Infrastructure.csproj" />
+  <Project Path="InventoryApp/InventoryApp.csproj" />
+</Solution>
