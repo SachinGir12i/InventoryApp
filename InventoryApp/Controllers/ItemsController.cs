@@ -1,5 +1,6 @@
 using InventoryApp.Application.Features.Items.Commands;
 using InventoryApp.Application.Features.Items.DTOs;
+using InventoryApp.Application.Features.Items.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -16,12 +17,35 @@ namespace InventoryApp.WebAPI.Controllers
             _mediator = mediator;
         }
 
+        // POST api/items
         [HttpPost]
         public async Task<IActionResult> CreateItem([FromBody] CreateItemDto dto)
         {
             var command = new CreateItemCommand { Item = dto };
             var itemId = await _mediator.Send(command);
             return Ok(new { Id = itemId, Message = "Item created successfully" });
+        }
+
+        // GET api/items
+        [HttpGet]
+        public async Task<IActionResult> GetAllItems()
+        {
+            var query = new GetAllItemsQuery();
+            var items = await _mediator.Send(query);
+            return Ok(items);
+        }
+
+        // GET api/items/1
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetItemById(int id)
+        {
+            var query = new GetItemByIdQuery { Id = id };
+            var item = await _mediator.Send(query);
+
+            if (item == null)
+                return NotFound(new { Message = $"Item with Id {id} was not found" });
+
+            return Ok(item);
         }
     }
 }

@@ -17,6 +17,7 @@ namespace InventoryApp.Infrastructure
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             services.AddScoped<IItemRepository, ItemRepository>();
+            services.AddScoped<IPartyRepository, PartyRepository>();
 
             return services;
         }

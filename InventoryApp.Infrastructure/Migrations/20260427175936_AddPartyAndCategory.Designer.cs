@@ -4,6 +4,7 @@ using InventoryApp.Infrastructure.Persistence;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace InventoryApp.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260427175936_AddPartyAndCategory")]
+    partial class AddPartyAndCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,14 +91,12 @@ namespace InventoryApp.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("CreditLimit")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<bool>("CreditReminderEnabled")
                         .HasColumnType("bit");
 
                     b.Property<decimal>("CurrentBalance")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("Email")
@@ -111,7 +112,6 @@ namespace InventoryApp.Infrastructure.Migrations
                         .HasColumnType("nvarchar(100)");
 
                     b.Property<decimal>("OpeningBalance")
-                        .HasPrecision(18, 2)
                         .HasColumnType("decimal(18,2)");
 
                     b.Property<string>("PANNumber")
@@ -138,8 +138,7 @@ namespace InventoryApp.Infrastructure.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("VATNumber")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
