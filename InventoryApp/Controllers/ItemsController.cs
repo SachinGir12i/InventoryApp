@@ -47,5 +47,20 @@ namespace InventoryApp.WebAPI.Controllers
 
             return Ok(item);
         }
+        // POST api/items/prices
+        [HttpPost("prices")]
+        public async Task<IActionResult> AddPrice([FromBody] AddItemPriceDto dto)
+        {
+            var id = await _mediator.Send(new AddItemPriceCommand { ItemPrice = dto });
+            return Ok(new { Id = id, Message = "Price added successfully" });
+        }
+
+        // GET api/items/1/prices
+        [HttpGet("{itemId}/prices")]
+        public async Task<IActionResult> GetPrices(int itemId)
+        {
+            var result = await _mediator.Send(new GetItemPricesQuery { ItemId = itemId });
+            return Ok(result);
+        }
     }
 }

@@ -18,6 +18,8 @@ namespace InventoryApp.Infrastructure
 
             services.AddScoped<IItemRepository, ItemRepository>();
             services.AddScoped<IPartyRepository, PartyRepository>();
+            services.AddScoped<IItemPriceRepository, ItemPriceRepository>();
+            services.AddScoped<IItemCategoryRepository, ItemCategoryRepository>();
 
             return services;
         }

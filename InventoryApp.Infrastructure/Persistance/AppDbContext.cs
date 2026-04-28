@@ -9,7 +9,9 @@ namespace InventoryApp.Infrastructure.Persistence
 
         public DbSet<Item> Items => Set<Item>();
         public DbSet<Party> Parties => Set<Party>();
-        public DbSet<PartyCategory> Categories => Set<PartyCategory>();
+        public DbSet<PartyCategory> PartyCategories => Set<PartyCategory>();
+        public DbSet<ItemCategory> ItemCategories => Set<ItemCategory>();
+        public DbSet<ItemPrice> ItemPrices => Set<ItemPrice>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,6 +22,11 @@ namespace InventoryApp.Infrastructure.Persistence
                 entity.Property(e => e.CostPrice).HasPrecision(18, 2);
                 entity.Property(e => e.SellingPrice).HasPrecision(18, 2);
                 entity.Property(e => e.SKU).HasMaxLength(50);
+              
+                entity.HasOne(e => e.Category)
+                      .WithMany(c => c.Items)
+                      .HasForeignKey(e => e.ItemCategoryId)
+                      .OnDelete(DeleteBehavior.SetNull);
             });
             modelBuilder.Entity<Party>(entity =>
             {
@@ -37,11 +44,25 @@ namespace InventoryApp.Infrastructure.Persistence
                       .HasForeignKey(e => e.PartyCategoryId)
                       .OnDelete(DeleteBehavior.SetNull);
             });
-                modelBuilder.Entity<PartyCategory>(entity =>
-                {
-                    entity.HasKey(e => e.Id);
-                    entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
-                });
+            modelBuilder.Entity<PartyCategory>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
+            });
+            modelBuilder.Entity<ItemCategory>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(50);
+            });
+            modelBuilder.Entity<ItemPrice>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Price).HasPrecision(18, 2);
+                entity.HasOne(e => e.Item)
+                      .WithMany(i => i.Prices)
+                      .HasForeignKey(e => e.ItemId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
         }
     }
 }

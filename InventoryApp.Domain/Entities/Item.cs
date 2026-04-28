@@ -12,5 +12,10 @@ namespace InventoryApp.Domain.Entities
         public int CurrentStock { get; set; } = 0;
         public int LowStockThreshold { get; set; } = 5;
         public bool IsActive { get; set; } = true;
+
+        public int? ItemCategoryId { get; set; }
+        public ItemCategory? Category { get; set; }
+
+        public ICollection<ItemPrice> Prices { get; set; } = new List<ItemPrice>();
     }
 }
