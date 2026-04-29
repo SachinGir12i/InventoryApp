@@ -13,9 +13,13 @@ namespace InventoryApp.Domain.Entities
         public int LowStockThreshold { get; set; } = 5;
         public bool IsActive { get; set; } = true;
 
+        // Foreign key to the item's category (nullable)
         public int? ItemCategoryId { get; set; }
+
+        // Navigation property to the item's category (nullable)
         public ItemCategory? Category { get; set; }
 
+        // Collection of price records associated with this item
         public ICollection<ItemPrice> Prices { get; set; } = new List<ItemPrice>();
     }
 }

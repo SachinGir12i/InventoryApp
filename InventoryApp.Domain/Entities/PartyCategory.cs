@@ -9,5 +9,8 @@ namespace InventoryApp.Domain.Entities
     {
         public string Name { get; set; } = string.Empty;
         public ICollection<Party> Parties { get; set; } = new List<Party>();
+        public Enums.PartyType Type { get; set; }
+        public bool IsActive { get; set; } = true;
+
     }
 }

@@ -13,6 +13,16 @@ namespace InventoryApp.Infrastructure.Repositories
 
         public async Task<Party> CreateAsync(Party party)
         {
+            // Validate PartyCategoryId exists if provided
+            if (party.PartyCategoryId.HasValue)
+            {
+                var exists = await _context.PartyCategories
+                    .AnyAsync(c => c.Id == party.PartyCategoryId.Value);
+
+                if (!exists)
+                    throw new InvalidOperationException($"PartyCategoryId {party.PartyCategoryId.Value} does not exist.");
+            }
+
             _context.Parties.Add(party);
             await _context.SaveChangesAsync();
             return party;
