@@ -108,5 +108,29 @@ namespace InventoryApp.Infrastructure.Repositories
             var count = await _context.Purchases.CountAsync();
             return $"PUR-{(count + 1):D4}";
         }
+
+        // Get all purchases in a date range for P&L
+        public async Task<List<Purchase>> GetByDateRangeAsync(
+           DateTime from, DateTime to)
+        {
+            return await _context.Purchases
+                // Load supplier info — needed for VAT report
+                .Include(p => p.Supplier)
+                .Where(p => p.PurchaseDate >= from &&
+                       p.PurchaseDate <= to.AddDays(1))
+                .OrderBy(p => p.PurchaseDate)
+                .ToListAsync();
+        }
+        public async Task<List<Purchase>> GetBySupplierAndDateRangeAsync(
+            int supplierId, DateTime from, DateTime to)
+        {
+            return await _context.Purchases
+                .Where(p => p.SupplierId == supplierId &&
+                       p.PurchaseDate >= from &&
+                       p.PurchaseDate <= to.AddDays(1))
+                .OrderBy(p => p.PurchaseDate)
+                .ToListAsync();
+
+        }
     }
 }

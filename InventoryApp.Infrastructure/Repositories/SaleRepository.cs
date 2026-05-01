@@ -105,5 +105,39 @@ namespace InventoryApp.Infrastructure.Repositories
             var count = await _context.Sales.CountAsync();
             return $"SAL-{(count + 1):D4}";
         }
+        // Get all sales in a date range for P&L
+        public async Task<List<Sale>> GetByDateRangeAsync(
+            DateTime from, DateTime to)
+        {
+            return await _context.Sales
+        // Load sale items with item names
+        // needed for top selling items breakdown
+        // Load customer info — needed for VAT report
+                .Include(s => s.Customer)
+                .Include(s => s.SaleItems)
+                    .ThenInclude(si => si.Item)
+                .Where(s => s.SaleDate >= from &&
+                       s.SaleDate <= to.AddDays(1))
+                .OrderBy(s => s.SaleDate)
+                .ToListAsync();
+        }
+
+        public async Task<List<Sale>> GetByCustomerAndDateRangeAsync(int customerId, DateTime from, DateTime to)
+        {
+            // Validate the input parameters
+            if (customerId <= 0)
+            {
+                throw new ArgumentException("Invalid customer ID", nameof(customerId));
+            }
+            if (from > to)
+            {
+                throw new ArgumentException("The 'from' date must be earlier than the 'to' date.", nameof(from));
+            }
+
+            // Query the sales from the database
+            return await _context.Sales
+                .Where(sale => sale.CustomerId == customerId && sale.SaleDate >= from && sale.SaleDate <= to)
+                .ToListAsync();
+        }
     }
 }

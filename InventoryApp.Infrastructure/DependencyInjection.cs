@@ -1,6 +1,7 @@
 ﻿using InventoryApp.Application.Interfaces;
 using InventoryApp.Infrastructure.Persistence;
 using InventoryApp.Infrastructure.Repositories;
+using InventoryApp.Infrastructure.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -22,6 +23,9 @@ namespace InventoryApp.Infrastructure
             services.AddScoped<IItemCategoryRepository, ItemCategoryRepository>();
             services.AddScoped<IPurchaseRepository, PurchaseRepository>();
             services.AddScoped<ISaleRepository, SaleRepository>();
+            services.AddScoped<IPaymentRepository, PaymentRepository>();
+            services.AddScoped<IProductionRepository, ProductionRepository>();
+            services.AddScoped<IInvoiceService, InvoiceService>();
 
             return services;
         }

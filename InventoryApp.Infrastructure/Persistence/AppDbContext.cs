@@ -17,6 +17,10 @@ namespace InventoryApp.Infrastructure.Persistence
         public DbSet<PurchaseItem> PurchaseItems => Set<PurchaseItem>();
         public DbSet<Sale> Sales => Set<Sale>();
         public DbSet<SaleItem> SaleItems => Set<SaleItem>();
+        public DbSet<Payment> Payments => Set<Payment>();
+        public DbSet<Production> Productions => Set<Production>();
+        public DbSet<ProductionMaterial> ProductionMaterials => Set<ProductionMaterial>();
+        public DbSet<ProductionOutput> ProductionOutputs => Set<ProductionOutput>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -161,6 +165,83 @@ namespace InventoryApp.Infrastructure.Persistence
                       .OnDelete(DeleteBehavior.Cascade);
 
                 // SaleItem references one Item
+                entity.HasOne(e => e.Item)
+                      .WithMany()
+                      .HasForeignKey(e => e.ItemId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+            // Payment config
+            modelBuilder.Entity<Payment>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.PaymentNumber).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.Amount).HasPrecision(18, 2);
+                entity.Property(e => e.TransactionReference).HasMaxLength(100);
+
+                // Payment belongs to one Party
+                entity.HasOne(e => e.Party)
+                      .WithMany()
+                      .HasForeignKey(e => e.PartyId)
+                      .OnDelete(DeleteBehavior.Restrict);
+
+                // Payment optionally linked to a Sale
+                entity.HasOne(e => e.Sale)
+                      .WithMany()
+                      .HasForeignKey(e => e.SaleId)
+                      .OnDelete(DeleteBehavior.SetNull)
+                      .IsRequired(false);
+
+                // Payment optionally linked to a Purchase
+                entity.HasOne(e => e.Purchase)
+                      .WithMany()
+                      .HasForeignKey(e => e.PurchaseId)
+                      .OnDelete(DeleteBehavior.SetNull)
+                      .IsRequired(false);
+            });
+            // Production config
+            modelBuilder.Entity<Production>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.ProductionNumber).IsRequired().HasMaxLength(20);
+                entity.Property(e => e.RawMaterialCost).HasPrecision(18, 2);
+                entity.Property(e => e.LaborCost).HasPrecision(18, 2);
+                entity.Property(e => e.OtherCost).HasPrecision(18, 2);
+                entity.Property(e => e.TotalCost).HasPrecision(18, 2);
+                entity.Property(e => e.TotalQuantityProduced).HasPrecision(18, 2);
+                entity.Property(e => e.CostPerUnit).HasPrecision(18, 2);
+            });
+
+            // ProductionMaterial config
+            modelBuilder.Entity<ProductionMaterial>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.QuantityUsed).HasPrecision(18, 2);
+                entity.Property(e => e.UnitCost).HasPrecision(18, 2);
+                entity.Property(e => e.TotalCost).HasPrecision(18, 2);
+
+                entity.HasOne(e => e.Production)
+                      .WithMany(p => p.MaterialsUsed)
+                      .HasForeignKey(e => e.ProductionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(e => e.Item)
+                      .WithMany()
+                      .HasForeignKey(e => e.ItemId)
+                      .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            // ProductionOutput config
+            modelBuilder.Entity<ProductionOutput>(entity =>
+            {
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.QuantityProduced).HasPrecision(18, 2);
+                entity.Property(e => e.UnitCost).HasPrecision(18, 2);
+
+                entity.HasOne(e => e.Production)
+                      .WithMany(p => p.OutputItems)
+                      .HasForeignKey(e => e.ProductionId)
+                      .OnDelete(DeleteBehavior.Cascade);
+
                 entity.HasOne(e => e.Item)
                       .WithMany()
                       .HasForeignKey(e => e.ItemId)
